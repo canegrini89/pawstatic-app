@@ -6,11 +6,12 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
-  Alert,
 } from 'react-native';
+import firebase from 'react-native-firebase';
 
-const Login = () => {
-  const [state, setState] = useState({email: '', password: ''});
+const Login = props => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [currentImageIndex, setCurrentImageIndex] = useState('');
   const Images = [
     'http://www.securelifeinsuranceplan.com/wp-content/uploads/2018/05/Low-Cost-Coverage-For-Your-Pet-Rabbit.jpg',
@@ -20,13 +21,20 @@ const Login = () => {
     'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.pinterest.com%2Fpin%2F835558537093793317%2F&psig=AOvVaw1j9Tu-crPZRnkq6JF3Kxzq&ust=1573568694870000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCNChjauu4uUCFQAAAAAdAAAAABAJ',
   ];
 
-  useEffect(() =>{
+  useEffect(() => {
     const randomNumber = Math.floor(Math.random() * Images.length);
     setCurrentImageIndex(randomNumber);
   }, [Images.length]);
 
-  const onClickListener = viewId => {
-    Alert.alert('Alert', 'Button pressed ' + viewId);
+  const onClickLogin = () => {
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .catch(function(error) {
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        console.log(errorCode, errorMessage);
+      });
   };
 
   return (
@@ -43,7 +51,7 @@ const Login = () => {
           placeholder="Email"
           keyboardType="email-address"
           underlineColorAndroid="transparent"
-          onChangeText={email => setState({email})}
+          onChangeText={emailText => setEmail(emailText)}
         />
         <Image
           style={styles.inputIcon}
@@ -57,29 +65,22 @@ const Login = () => {
           placeholder="Password"
           secureTextEntry={true}
           underlineColorAndroid="transparent"
-          onChangeText={password => setState({password})}
+          onChangeText={passwordText => setPassword(passwordText)}
         />
         <Image
           style={styles.inputIcon}
           source={{uri: 'https://img.icons8.com/nolan/40/000000/key.png'}}
         />
       </View>
-
-      <TouchableOpacity
-        style={styles.btnForgotPassword}
-        onPress={() => onClickListener('restore_password')}>
-        <Text style={styles.btnText}>Forgot your password?</Text>
-      </TouchableOpacity>
-
       <TouchableOpacity
         style={[styles.buttonContainer, styles.loginButton]}
-        onPress={() => onClickListener('login')}>
+        onPress={() => onClickLogin()}>
         <Text style={styles.loginText}>Login</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
         style={styles.buttonContainer}
-        onPress={() => onClickListener('register')}>
+        onPress={() => props.navigation.navigate('Register')}>
         <Text style={styles.btnText}>Register</Text>
       </TouchableOpacity>
     </View>

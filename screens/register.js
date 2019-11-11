@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   Text,
@@ -6,28 +6,65 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
-  Alert,
 } from 'react-native';
+import firebase from 'react-native-firebase';
 
-const Register = () => {
-  const [state, setState] = useState({email: '', password: ''});
+const Register = props => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  // const [currentUser, setCurrentUser] = useState({});
+  const [currentImageIndex, setCurrentImageIndex] = useState('');
+  const Images = [
+    'http://www.securelifeinsuranceplan.com/wp-content/uploads/2018/05/Low-Cost-Coverage-For-Your-Pet-Rabbit.jpg',
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRzxpIHWDkK5LG_DfZIcumEYIRGJnUnA4Go3XYGXDk7KVAkPRNs',
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQK6hfR0ROykjZdJ94lC1cp-yCKNIgUJx3zeDhhnwlSIYLDCM3k',
+    'https://static.independent.co.uk/s3fs-public/thumbnails/image/2017/03/28/13/kitten.jpg?w968h681',
+    'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.pinterest.com%2Fpin%2F835558537093793317%2F&psig=AOvVaw1j9Tu-crPZRnkq6JF3Kxzq&ust=1573568694870000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCNChjauu4uUCFQAAAAAdAAAAABAJ',
+  ];
 
-  const onClickListener = viewId => {
-    Alert.alert('Alert', 'Button pressed ' + viewId);
+  useEffect(() => {
+    const randomNumber = Math.floor(Math.random() * Images.length);
+    setCurrentImageIndex(randomNumber);
+  }, [Images.length]);
+
+  const onRegister = () => {
+    firebase
+      .auth()
+      .createUserWithEmailAndPassword(email.toLowerCase(), password)
+      .then(result => {
+        return result.user
+          .updateProfile({
+            displayName: name,
+          })
+          .then(() => {
+            firebase
+              .database()
+              .ref('users/' + result.user.uid + '/profile')
+              .set({
+                name,
+                password,
+                email,
+                id: result.user.uid,
+              });
+          });
+      })
+      .catch(error => {
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        console.log(errorCode, errorMessage);
+      });
   };
 
   return (
     <View style={styles.container}>
-      <Image
-        style={styles.bgImage}
-        source={{uri: 'https://lorempixel.com/900/1400/nightlife/8/'}}
-      />
+      <Image style={styles.bgImage} source={{uri: Images[currentImageIndex]}} />
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.inputs}
           placeholder="Full name"
           underlineColorAndroid="transparent"
-          onChangeText={email => setState({email})}
+          onChangeText={nameText => setName(nameText)}
         />
         <Image
           style={styles.inputIcon}
@@ -44,7 +81,7 @@ const Register = () => {
           placeholder="Email"
           keyboardType="email-address"
           underlineColorAndroid="transparent"
-          onChangeText={email => setState({email})}
+          onChangeText={emailText => setEmail(emailText)}
         />
         <Image
           style={styles.inputIcon}
@@ -61,7 +98,7 @@ const Register = () => {
           placeholder="Password"
           secureTextEntry={true}
           underlineColorAndroid="transparent"
-          onChangeText={password => setState({password})}
+          onChangeText={passwordText => setPassword(passwordText)}
         />
         <Image
           style={styles.inputIcon}
@@ -71,20 +108,18 @@ const Register = () => {
         />
       </View>
 
-      <TouchableOpacity
-        style={styles.btnByRegister}
-        onPress={() => onClickListener('restore_password')}>
+      <TouchableOpacity style={styles.btnByRegister}>
         {/* <Text style={styles.textByRegister}>Social Auth</Text> */}
       </TouchableOpacity>
       <TouchableOpacity
         style={[styles.buttonContainer, styles.loginButton]}
-        onPress={() => onClickListener('login')}>
+        onPress={() => onRegister()}>
         <Text style={styles.registerText}>Register</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
         style={styles.buttonContainer}
-        onPress={() => onClickListener('register')}>
+        onPress={() => props.navigation.navigate('Login')}>
         <Text style={styles.btnText}>Have an account?</Text>
       </TouchableOpacity>
     </View>
@@ -173,6 +208,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     height: '100%',
+    opacity: 0.8,
+    backgroundColor: 'black',
     justifyContent: 'center',
   },
   btnText: {

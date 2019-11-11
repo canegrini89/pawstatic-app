@@ -3,6 +3,7 @@ import {createSwitchNavigator, createAppContainer} from 'react-navigation';
 import Loading from './components/loading';
 import Register from './screens/register';
 import Login from './screens/login';
+import TabBar from './components/tabBar';
 
 const App = createAppContainer(
   createSwitchNavigator(
@@ -10,10 +11,10 @@ const App = createAppContainer(
       Loading,
       Register,
       Login,
-      // TabBarNavigation,
+      TabBar,
     },
     {
-      initialRouteName: 'Login',
+      initialRouteName: 'Loading',
     },
   ),
 );
