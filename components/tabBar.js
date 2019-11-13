@@ -3,6 +3,7 @@ import {Text, StatusBar, Button} from 'react-native';
 import firebase from 'react-native-firebase';
 import {TabBar, Icon} from '@ant-design/react-native';
 import Profile from '../screens/profile';
+import Friends from '../screens/friends';
 
 const TabBarNavigation = props => {
   const [selectedTab, setSelectedTab] = useState('Home');
@@ -63,7 +64,7 @@ const TabBarNavigation = props => {
           dot
           selected={selectedTab === 'Friend'}
           onPress={() => handleChangePage('Friend')}>
-          <Text>Hello</Text>
+          <Friends />
         </TabBar.Item>
         <TabBar.Item
           title="Profile"
