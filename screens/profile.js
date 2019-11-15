@@ -20,27 +20,27 @@ const Profile = () => {
     firebase.auth().onAuthStateChanged(currentUser => {
       if (currentUser) {
         setUser(currentUser._user);
+        firebase
+          .database()
+          .ref('users/' + currentUser._user.uid)
+          .child('profile')
+          .on('value', snap => {
+            if (snap.val().picture) {
+              setPicture(snap.val().picture);
+            } else {
+              setPicture(
+                'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRlW3r9_qcfU-6M9Qf9witE-skyTNjkbHqCfgWscQC6H96Vv-IX',
+              );
+            }
+            if (snap.val().backPicture) {
+              setBackground(snap.val().backPicture);
+            } else {
+              setBackground(
+                'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSQSyo2oLyCh1yIvBqi-_tMhd6GgyAv_eAoCoZ-AvlJcK76s1u-',
+              );
+            }
+          });
       }
-      firebase
-        .database()
-        .ref('users/' + currentUser._user.uid)
-        .child('profile')
-        .on('value', snap => {
-          if (snap.val().picture) {
-            setPicture(snap.val().picture);
-          } else {
-            setPicture(
-              'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRlW3r9_qcfU-6M9Qf9witE-skyTNjkbHqCfgWscQC6H96Vv-IX',
-            );
-          }
-          if (snap.val().backPicture) {
-            setBackground(snap.val().backPicture);
-          } else {
-            setBackground(
-              'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSQSyo2oLyCh1yIvBqi-_tMhd6GgyAv_eAoCoZ-AvlJcK76s1u-',
-            );
-          }
-        });
     });
   }, [picture]);
 
@@ -120,11 +120,7 @@ const Profile = () => {
         />
       </TouchableOpacity>
       <TouchableOpacity style={styles.avatar} onPress={openPicker}>
-        <Image
-          style={styles.avatarImg}
-          source={{uri: picture}}
-          onPress={openPicker}
-        />
+        <Image style={styles.avatarImg} source={{uri: picture}} />
       </TouchableOpacity>
       <View style={styles.body}>
         <View style={styles.bodyContent}>

@@ -6,139 +6,59 @@ import {
   TouchableOpacity,
   Image,
   FlatList,
+  TouchableHighlight,
 } from 'react-native';
 import firebase from 'react-native-firebase';
+import {WhiteSpace} from '@ant-design/react-native';
 import {SearchBar} from 'react-native-elements';
+import {withNavigation} from 'react-navigation';
 
-const Friends = () => {
-  // const [currentUser, setCurrentUser] = useState(null);
-
-  // useEffect(() => {
-  //   firebase.auth().onAuthStateChanged(user => {
-  //     setCurrentUser(user);
-  //     firebase
-  //       .database()
-  //       .ref('users')
-  //       .on('value', snap => {
-  //         if (snap.val()) {
-  //           const toArray = [];
-
-  //           Object.keys(snap.val()).forEach(item => {
-  //             if (item !== user.uid) {
-  //               toArray.push(snap.val()[item]);
-  //             }
-  //           });
-  //           setData(toArray);
-  //         }
-  //       });
-  //   });
-  // }, []);
+const Friends = props => {
+  const [currentUser, setCurrentUser] = useState(null);
   const [text, setText] = useState('');
   const [filterData, setFilterData] = useState(null);
-  const [newData, setData] = useState([
-    {
-      id: 1,
-      name: 'Mark Doe',
-      date: '12 jan',
-      time: '11:14 am',
-      video: false,
-      image: 'https://bootdey.com/img/Content/avatar/avatar7.png',
-    },
-    {
-      id: 2,
-      name: 'Clark Man',
-      date: '12 jul',
-      time: '15:58 am',
-      video: false,
-      image: 'https://bootdey.com/img/Content/avatar/avatar6.png',
-    },
-    {
-      id: 3,
-      name: 'Jaden Boor',
-      date: '12 aug',
-      time: '12:45 am',
-      video: true,
-      image: 'https://bootdey.com/img/Content/avatar/avatar5.png',
-    },
-    {
-      id: 4,
-      name: 'Srick Tree',
-      date: '12 feb',
-      time: '08:32 am',
-      video: false,
-      image: 'https://bootdey.com/img/Content/avatar/avatar4.png',
-    },
-    {
-      id: 5,
-      name: 'John Doe',
-      date: '12 oct',
-      time: '07:45 am',
-      video: true,
-      image: 'https://bootdey.com/img/Content/avatar/avatar3.png',
-    },
-    {
-      id: 6,
-      name: 'John Doe',
-      date: '12 jan',
-      time: '09:54 am',
-      video: false,
-      image: 'https://bootdey.com/img/Content/avatar/avatar2.png',
-    },
-    {
-      id: 8,
-      name: 'John Doe',
-      date: '12 jul',
-      time: '11:22 am',
-      video: true,
-      image: 'https://bootdey.com/img/Content/avatar/avatar1.png',
-    },
-    {
-      id: 9,
-      name: 'John Doe',
-      date: '12 aug',
-      time: '13:33 am',
-      video: false,
-      image: 'https://bootdey.com/img/Content/avatar/avatar4.png',
-    },
-    {
-      id: 10,
-      name: 'John Doe',
-      date: '12 oct',
-      time: '11:58 am',
-      video: true,
-      image: 'https://bootdey.com/img/Content/avatar/avatar7.png',
-    },
-    {
-      id: 11,
-      name: 'John Doe',
-      date: '12 jan',
-      time: '09:28 am',
-      video: false,
-      image: 'https://bootdey.com/img/Content/avatar/avatar1.png',
-    },
-  ]);
+  const [newData, setData] = useState([]);
+
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged(user => {
+      setCurrentUser(user._user);
+      firebase
+        .database()
+        .ref('users')
+        .on('value', snap => {
+          if (snap.val()) {
+            const toArray = [];
+
+            Object.keys(snap.val()).forEach(item => {
+              if (item !== user._user.uid) {
+                toArray.push(snap.val()[item]);
+              }
+            });
+            setData(toArray);
+          }
+        });
+    });
+  }, []);
 
   const filterList = search => {
     setText(search);
     let items = newData;
     items = items.filter(item => {
-      return item.name.toLowerCase().search(search.toLowerCase()) !== -1;
+      return (
+        item.profile.name.toLowerCase().search(search.toLowerCase()) !== -1
+      );
     });
     setFilterData(items);
   };
 
   const renderItem = ({item}) => {
-    var callIcon = 'https://img.icons8.com/color/48/000000/phone.png';
-    if (item.video === true) {
-      callIcon = 'https://img.icons8.com/color/48/000000/video-call.png';
-    }
     return (
       <TouchableOpacity>
         <View style={styles.row}>
-          <Image source={{uri: item.image}} style={styles.pic} />
+          <Image source={{uri: item.profile.picture}} style={styles.pic} />
           <View>
             <View style={styles.nameContainer}>
-              <Text style={styles.nameTxt}>{item.name}</Text>
+              <Text style={styles.nameTxt}>{item.profile.name}</Text>
             </View>
             <View style={styles.end}>
               <Image
@@ -148,19 +68,36 @@ const Friends = () => {
                   {marginLeft: 15, marginRight: 5, width: 14, height: 14},
                 ]}
                 source={{
-                  uri: 'https://img.icons8.com/small/14/000000/double-tick.png',
+                  uri:
+                    'https://cdn3.iconfinder.com/data/icons/basic-regular-2/64/120-128.png',
                 }}
               />
-              <Text style={styles.time}>
-                {item.date} {item.time}
-              </Text>
+              <Text style={styles.time}>{item.profile.email}</Text>
             </View>
           </View>
-          <Image
-            // eslint-disable-next-line react-native/no-inline-styles
-            style={[styles.icon, {marginRight: 50}]}
-            source={{uri: callIcon}}
-          />
+          <TouchableOpacity>
+            <Image
+              // eslint-disable-next-line react-native/no-inline-styles
+              style={styles.icon}
+              source={{
+                uri:
+                  'https://cdn1.iconfinder.com/data/icons/twitter-ui-colored/48/JD-27-128.png',
+              }}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() =>
+              props.navigation.navigate('Chat', {item: item.profile})
+            }>
+            <Image
+              // eslint-disable-next-line react-native/no-inline-styles
+              style={styles.icon}
+              source={{
+                uri:
+                  'https://cdn0.iconfinder.com/data/icons/pinterest-flat/48/Paul-13-128.png',
+              }}
+            />
+          </TouchableOpacity>
         </View>
       </TouchableOpacity>
     );
@@ -175,10 +112,11 @@ const Friends = () => {
         onClear={text => filterList('')}
         placeholder="Type Name of Friends..."
       />
+      <WhiteSpace />
       <FlatList
         data={filterData || newData}
         keyExtractor={item => {
-          return item.id;
+          return item.profile.id;
         }}
         renderItem={renderItem}
       />
@@ -186,7 +124,7 @@ const Friends = () => {
   );
 };
 
-export default Friends;
+export default withNavigation(Friends);
 
 const styles = StyleSheet.create({
   row: {
@@ -196,7 +134,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderBottomWidth: 1,
     padding: 10,
-    justifyContent: 'space-between',
+    justifyContent: 'center',
   },
   pic: {
     borderRadius: 25,
@@ -206,7 +144,7 @@ const styles = StyleSheet.create({
   nameContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: 270,
+    width: 190,
   },
   nameTxt: {
     marginLeft: 15,
@@ -229,7 +167,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   icon: {
-    height: 28,
-    width: 28,
+    height: 70,
+    width: 70,
   },
 });

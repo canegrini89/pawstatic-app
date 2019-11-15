@@ -4,6 +4,7 @@ import firebase from 'react-native-firebase';
 import {TabBar, Icon} from '@ant-design/react-native';
 import Profile from '../screens/profile';
 import Friends from '../screens/friends';
+import {withNavigation} from 'react-navigation';
 
 const TabBarNavigation = props => {
   const [selectedTab, setSelectedTab] = useState('Home');
@@ -80,4 +81,4 @@ const TabBarNavigation = props => {
   );
 };
 
-export default TabBarNavigation;
+export default withNavigation(TabBarNavigation);
