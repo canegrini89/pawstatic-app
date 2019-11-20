@@ -13,7 +13,6 @@ import firebase from 'react-native-firebase';
 class Loading extends Component {
   async componentDidMount() {
     firebase.auth().onAuthStateChanged(user => {
-      console.log(this.props)
       this.props.navigation.navigate(user ? 'TabBar' : 'Login');
     });
     this.checkPermission();

@@ -9,19 +9,19 @@ import {withNavigation} from 'react-navigation';
 const TabBarNavigation = props => {
   const [selectedTab, setSelectedTab] = useState('Home');
 
+  // useEffect(() => {
+  //   if (props.navigation.state.key === 'Chat') {
+  //     let value = props.navigation.getParam('param');
+  //     if (value !== null) {
+  //       setSelectedTab(value);
+  //     } else {
+  //       setSelectedTab('Home');
+  //     }
+  //   }
+  // }, [props.navigation]);
+
   const handleChangePage = text => {
     setSelectedTab(text);
-  };
-  const logOut = () => {
-    firebase
-      .auth()
-      .signOut()
-      .then(() => {
-        () => {
-          console.log('not lgued');
-        };
-      })
-      .catch(error => error);
   };
 
   return (
@@ -38,11 +38,11 @@ const TabBarNavigation = props => {
           selected={selectedTab === 'Home'}
           data-seed="logId"
           onPress={() => handleChangePage('Home')}>
-          <Button title="Log Out" onPress={() => logOut()} />
+          <Text>hello</Text>
         </TabBar.Item>
         <TabBar.Item
           title="Chat"
-          key="chat"
+          key="Chat"
           icon={<Icon name="smile" />}
           selected={selectedTab === 'Pets'}
           data-seed="logId1"

@@ -38,7 +38,7 @@ const Friends = props => {
           }
         });
     });
-  }, []);
+  }, [newData]);
 
   const filterList = search => {
     setText(search);
@@ -75,7 +75,7 @@ const Friends = props => {
               <Text style={styles.time}>{item.profile.email}</Text>
             </View>
           </View>
-          <TouchableOpacity>
+          <TouchableOpacity style={styles.contImg}>
             <Image
               // eslint-disable-next-line react-native/no-inline-styles
               style={styles.icon}
@@ -88,7 +88,8 @@ const Friends = props => {
           <TouchableOpacity
             onPress={() =>
               props.navigation.navigate('Chat', {item: item.profile})
-            }>
+            }
+            style={styles.contImg}>
             <Image
               // eslint-disable-next-line react-native/no-inline-styles
               style={styles.icon}
@@ -136,6 +137,9 @@ const styles = StyleSheet.create({
     padding: 10,
     justifyContent: 'center',
   },
+  contImg: {
+    width: 60,
+  },
   pic: {
     borderRadius: 25,
     width: 50,
@@ -144,7 +148,7 @@ const styles = StyleSheet.create({
   nameContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: 190,
+    width: 180,
   },
   nameTxt: {
     marginLeft: 15,
@@ -165,6 +169,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     color: '#666',
     fontSize: 12,
+    width: 140,
   },
   icon: {
     height: 70,

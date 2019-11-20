@@ -200,6 +200,7 @@ dependencies {
     }
     implementation 'com.google.firebase:firebase-inappmessaging-display:18.0.0'
     implementation 'me.leolin:ShortcutBadger:1.1.21@aar'
+    implementation "com.google.firebase:firebase-functions:17.0.0"
 
     compile 'com.android.support:multidex:1.0.0'
     if (enableHermes) {

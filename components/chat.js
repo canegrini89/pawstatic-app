@@ -12,6 +12,8 @@ import {
   Button,
   Dimensions,
   KeyboardAvoidingView,
+  BackHandler,
+  AsyncStorage,
 } from 'react-native';
 import {withNavigation} from 'react-navigation';
 import firebase from 'react-native-firebase';
@@ -47,8 +49,23 @@ const Chat = props => {
             setMessages(orderBy(newMessage, ['date'], ['desc', 'asc']));
           });
       }
+      BackHandler.addEventListener(
+        'hardwareBackPress',
+        handleBackButtonPressAndroid,
+      );
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser.picture, params.id, props.navigation]);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const handleBackButtonPressAndroid = () => {
+    if (props.navigation.state.key === 'Chat') {
+      props.navigation.navigate('TabBar', {param: 'Friend'});
+      return true;
+    } else {
+      return false;
+    }
+  };
 
   const send = () => {
     if (msg.length > 0) {

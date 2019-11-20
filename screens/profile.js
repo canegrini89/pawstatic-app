@@ -42,7 +42,20 @@ const Profile = () => {
           });
       }
     });
-  }, [picture]);
+  }, [picture, background]);
+
+  const logOut = () => {
+    firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        setUser(null);
+        () => {
+          console.log('not lgued');
+        };
+      })
+      .catch(error => error);
+  };
 
   const openPicker = value => {
     const options = {
@@ -142,6 +155,16 @@ const Profile = () => {
           <Text style={styles.count}>0</Text>
         </View>
       </View>
+
+      <TouchableOpacity style={styles.imageCont} onPress={logOut}>
+        <Image
+          style={styles.img}
+          source={{
+            uri:
+              'https://cdn4.iconfinder.com/data/icons/glyphs/24/icons_settings-128.png',
+          }}
+        />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -151,34 +174,49 @@ export default Profile;
 const styles = StyleSheet.create({
   header: {
     backgroundColor: '#00BFFF',
-    height: 200,
+    height: 150,
   },
   avatar: {
-    width: 130,
-    height: 130,
+    width: 100,
+    height: 100,
     borderRadius: 63,
     marginBottom: 10,
     alignSelf: 'center',
     position: 'absolute',
-    marginTop: 130,
+    marginTop: 90,
   },
   profileDetailRigth: {
     alignSelf: 'flex-end',
-    marginTop: 150,
+    marginTop: 110,
     alignItems: 'center',
     flexDirection: 'row',
     position: 'absolute',
     backgroundColor: '#ffffff',
     borderRadius: 20,
+    width: 90,
+  },
+  imageCont: {
+    alignSelf: 'flex-end',
+    marginTop: 15,
+    flexDirection: 'row',
+    position: 'absolute',
+    width: 90,
+    height: 90,
+  },
+  img: {
+    marginLeft: 40,
+    width: 30,
+    height: 30,
   },
   profileDetail: {
     alignSelf: 'flex-start',
-    marginTop: 150,
+    marginTop: 110,
     alignItems: 'center',
     flexDirection: 'row',
     position: 'absolute',
     backgroundColor: '#ffffff',
     borderRadius: 20,
+    width: 90,
   },
   detailContent: {
     margin: 10,
@@ -192,15 +230,15 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   avatarImg: {
-    width: 130,
-    height: 130,
+    width: 100,
+    height: 100,
     borderRadius: 63,
     borderWidth: 4,
     borderColor: 'white',
     marginBottom: 10,
   },
   body: {
-    marginTop: 40,
+    marginTop: 20,
   },
   bodyContent: {
     flex: 1,
@@ -208,13 +246,13 @@ const styles = StyleSheet.create({
     padding: 30,
   },
   name: {
-    fontSize: 26,
+    fontSize: 18,
     color: '#696969',
     fontWeight: '600',
   },
   info: {
-    fontSize: 18,
+    fontSize: 14,
     color: '#00BFFF',
-    marginTop: 8,
+    marginTop: 5,
   },
 });
